@@ -1,0 +1,5 @@
+# ignore compile temp file
+*.pyc
+
+# ignore temp dir
+hbase/

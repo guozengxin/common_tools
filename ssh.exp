@@ -1,0 +1,84 @@
+#!/usr/bin/expect -f
+
+set operation [lindex $argv 0]
+
+if {$operation == "mget" } {
+	set operation "multi-get"
+} elseif {$operation == "mput" } {
+	set operation "multi-put"
+} elseif {$operation == "mexec"} {
+	set operation "multi-exec"
+}
+
+set multi 0
+if {$operation == "multi-get" } {
+	set operation "get"
+	set multi 1
+} elseif {$operation == "multi-put" } {
+	set operation "put"
+	set multi 1
+} elseif {$operation == "multi-exec"} {
+	set operation "exec"
+	set multi 1
+}
+
+set hostfile [lindex $argv 1]
+if {$multi == 1} {
+	set hostfilefp [open $hostfile] 
+	set hostlist [read $hostfilefp]
+} else {
+	set hostlist $hostfile
+}
+set port [lindex $argv 2]
+set user [lindex $argv 3]
+set password [lindex $argv 4]
+if {$operation == "exec"} {
+	set command [lindex $argv 5]
+} else {
+	set remotepath [lindex $argv 5]
+}
+
+if {$operation == "get" || $operation == "put"} {
+	set localpath [lindex $argv 6]
+	if {$localpath == ""} {
+		regexp {/([^/]+)$} $remotepath m localpath
+		if {$localpath == ""} {
+			exit
+		}
+	}
+}
+
+set timeout -1
+
+if {$operation == "put" || $operation == "get" || $operation == "exec"} {
+} else {
+	puts "wrong command $operation"
+	exit
+}
+
+foreach host [split $hostlist \n] {
+	if {[regexp {^[a-z0-9\.]+$} $host]} {
+		if {$operation == "put"} {
+			spawn scp -P $port $localpath $user@$host:$remotepath
+		} elseif {$operation == "get" } {
+			if {$multi} {
+				spawn scp -P $port $user@$host:$remotepath $localpath$host
+			} else {
+				spawn scp -P $port $user@$host:$remotepath $localpath
+			}
+		} elseif {$operation == "exec" } {
+			spawn ssh -p $port $user@$host $command
+		} else {
+			exit
+		}
+		expect {
+			"yes/no" { send "yes\r"; exp_continue}
+			"password:" { send "$password\r" }
+			eof {continue}
+		}
+		expect eof
+	} elseif {[string length $host] > 0} {
+		puts "bad host"
+	}
+}
+
