@@ -97,13 +97,22 @@ if __name__ == "__main__":
         print >> sys.stderr, "need source file path"
         sys.exit(1)
 
+    encoding = 'gbk'
+    if sys.argv[1].lower() in ['utf-8', 'utf8', 'gbk', 'gb2312', 'gb18030']:
+        encoding = sys.argv[1]
+        files = sys.argv[2:]
+    else:
+        files = sys.argv[1:]
+
     body = "<html>\n"
-    body += "<head>\n<style type=\"text/css\">\n"
+    body += "<head>\n"
+    body += "<meta name=\"Content-Type\" content=\"text/html; charset=%s\" />\n" % (encoding)
+    body += "<style type=\"text/css\">\n"
     body += "body {font-size: 14px; MARGIN: auto; FONT-FAMILY: arial}\n"
     body += "table {border-collapse:collapse; margin:0px, 2px; padding:2px; font-size:12px; }\n</style>\n</head>\n<body>\n"
 
-    for i in range(1, len(sys.argv)):
-        body += formathtml(sys.argv[i])
+    for f in files:
+        body += formathtml(f)
 
     body += "<hr size=1><br>\n";
     body += "</body>\n</html>\n";
