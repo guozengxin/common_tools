@@ -5,6 +5,8 @@
 # 如果不想直接输入明文密码，可用-p代替
 #####################################################################
 
+ssh_exp=/search/guozengxin/tools/shell/ssh.exp
+
 usage()
 {
 	echo "usage: sh ssh_trust_local.sh remotehost remoteuser remotepasswd"
@@ -42,11 +44,11 @@ keycopy()
 	hn=`hostname`
 	remote_keyname=id_rsa.pub."$hn"
 	echo "将公钥拷贝到远程主机，位置：~/.ssh/"$remote_keyname"..."
-	./ssh.exp put $remotehost 22 $remoteuser $remotepasswd '~/.ssh/'$remote_keyname $local_rsa_pub 
+	$ssh_exp put $remotehost 22 $remoteuser $remotepasswd '~/.ssh/'$remote_keyname $local_rsa_pub 
 	echo "将公钥加入到远程主机文件：~/.ssh/authorized_keys..."
-	./ssh.exp exec $remotehost 22 $remoteuser $remotepasswd "cd ~/.ssh/ && cat $remote_keyname >> authorized_keys"
+	$ssh_exp exec $remotehost 22 $remoteuser $remotepasswd "cd ~/.ssh/ && cat $remote_keyname >> authorized_keys"
 	echo "设置远程主机authorized_keys文件权限：600..."
-	./ssh.exp exec $remotehost 22 $remoteuser $remotepasswd "cd ~/.ssh/ && chmod 600 authorized_keys"
+	$ssh_exp exec $remotehost 22 $remoteuser $remotepasswd "cd ~/.ssh/ && chmod 600 authorized_keys"
 }
 
 local_rsa_pub=~/.ssh/id_rsa.pub
