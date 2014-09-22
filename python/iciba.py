@@ -78,11 +78,11 @@ def parseHtml(data):
     pronsList = tmpParser.etlist_xpath('.//span[@class="fl"]')
     for prons in pronsList:
         pronsType = getFirstText(prons).strip('\r\n\t')
-        pronsStr = getFirstText(prons.xpath('.//strong[@lang]'))
+        pronsStr = getFirstText(prons.xpath('.//strong[@lang]')).strip()
         if pronsStr == '':
             pronsStr = getFirstText(prons.xpath('.//strong'))
         else:
-            pronsStr = '[' + ']'
+            pronsStr = '[' + pronsStr + ']'
         if len(pronsType) == 0 and len(pronsStr) == 0:
             continue
         result['prons'].append([pronsType, pronsStr])
