@@ -34,17 +34,28 @@ def parseOpt(args):
 
 
 def getFirstText(tree, encoding=outputEncoding):
-    return tree[0].text.encode(encoding)
+    try:
+        if type(tree) is list:
+            t = tree[0].text
+        else:
+            t = tree.text
+        if t is not None:
+            return t.encode(encoding)
+        else:
+            return ''
+    except IndexError:
+        return ''
 
 
-def printResult(result):
+def printResult(word, result):
     tColor = 'green'
     vColor = 'cyan'
+    print word
     if len(result['prons']) > 0:
         print '·¢Òô'
         for t, v in result['prons']:
             colorprint.colorPrint('  %s' % t, tColor, attr=1)
-            colorprint.colorPrint('[%s]' % v, vColor, attr=4)
+            colorprint.colorPrint('%s' % v, vColor, attr=4)
         print
     if len(result['groupPos']) > 0:
         print 'ÊÍÒå'
@@ -66,16 +77,26 @@ def parseHtml(data):
     tmpParser.feed_etree(dictMainDiv)
     pronsList = tmpParser.etlist_xpath('.//span[@class="fl"]')
     for prons in pronsList:
-        pronsType = prons.text.encode('gbk').strip('\r\n\t ')
+        pronsType = getFirstText(prons).strip('\r\n\t')
         pronsStr = getFirstText(prons.xpath('.//strong[@lang]'))
+        if pronsStr == '':
+            pronsStr = getFirstText(prons.xpath('.//strong'))
+        else:
+            pronsStr = '[' + ']'
+        if len(pronsType) == 0 and len(pronsStr) == 0:
+            continue
         result['prons'].append([pronsType, pronsStr])
     groupPosList = tmpParser.etlist_xpath('.//div[@class="group_pos"]/p')
     for groupPos in groupPosList:
         posType = getFirstText(groupPos.xpath('.//strong'))
+        if posType is None:
+            continue
         posContent = ''
         contentList = groupPos.xpath('.//label/text()')
         for c in contentList:
             posContent += c.encode(outputEncoding)
+        if len(posType) == 0 and len(posContent) == 0:
+            continue
         result['groupPos'].append([posType, posContent])
     netContentList = tmpParser.etlist_xpath('.//div[@class="net_paraphrase"]/ul/li')
     netContent = ''
@@ -87,21 +108,27 @@ def parseHtml(data):
 
 
 def translate(word):
-    url = 'http://www.iciba.com/' + word
-    data = htmlfetcher.http_get(url)
+    url = 'http://www.iciba.com/' + word.decode('gbk').encode('utf8')
+    home = 'http://www.iciba.com/'
+    data = htmlfetcher.http_get(url, referer=home)
     if data is None:
         print >> sys.stderr, 'Fetch result from iciba.com failed!'
     else:
         result = parseHtml(data)
-        printResult(result)
+        printResult(word, result)
 
 
 def main():
     config, args = parseOpt(sys.argv[1:])
     if config['daemon']:
-        for line in sys.stdin:
+        while True:
+            line = sys.stdin.readline()
+            if not line:
+                break
             word = line.strip()
             translate(word)
+            sys.stdout.flush()
+            sys.stderr.flush()
     else:
         if len(args) == 0:
             usage()
