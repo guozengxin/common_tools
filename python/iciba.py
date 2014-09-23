@@ -66,6 +66,7 @@ def printResult(word, result):
     if len(result['netContent']) > 0:
         print 'ÍøÂç'
         colorprint.colorPrint('  %s' % result['netContent'], vColor, attr=1)
+        print
 
 
 def parseHtml(data):
