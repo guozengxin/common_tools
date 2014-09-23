@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# encoding=gb18030
+# encoding=utf-8
 
 import sys
 import getopt
@@ -7,7 +7,7 @@ import htmlfetcher
 from htmlparser import HtmlXPathParser
 import colorprint
 
-outputEncoding = 'gb18030'
+outputEncoding = 'utf-8'
 
 
 def usage():
@@ -52,19 +52,19 @@ def printResult(word, result):
     vColor = 'cyan'
     print word
     if len(result['prons']) > 0:
-        print '·¢Òô'
+        print 'å‘éŸ³'.decode('utf-8').encode(outputEncoding)
         for t, v in result['prons']:
             colorprint.colorPrint('  %s' % t, tColor, attr=1)
             colorprint.colorPrint('%s' % v, vColor, attr=4)
         print
     if len(result['groupPos']) > 0:
-        print 'ÊÍÒå'
+        print 'é‡Šä¹‰'.decode('utf-8').encode(outputEncoding)
         for t, v in result['groupPos']:
             colorprint.colorPrint('  %s' % t, tColor, attr=1)
             colorprint.colorPrint(v, vColor, attr=4)
             print
     if len(result['netContent']) > 0:
-        print 'ÍøÂç'
+        print 'ç½‘ç»œ'.decode('utf-8').encode(outputEncoding)
         colorprint.colorPrint('  %s' % result['netContent'], vColor, attr=1)
         print
 
@@ -102,7 +102,7 @@ def parseHtml(data):
     netContentList = tmpParser.etlist_xpath('.//div[@class="net_paraphrase"]/ul/li')
     netContent = ''
     for nc in netContentList:
-        netContent += nc.text.encode('gb18030').strip()
+        netContent += nc.text.encode(outputEncoding).strip()
     result['netContent'] = netContent
 
     return result
