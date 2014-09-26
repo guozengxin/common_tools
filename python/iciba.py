@@ -7,11 +7,52 @@ import htmlfetcher
 from htmlparser import HtmlXPathParser
 import colorprint
 
-outputEncoding = 'utf-8'
+outputEncoding = 'gb18030'
+
+
+class _GetchUnix:
+    def __init__(self):
+        pass
+
+    def __call__(self):
+        import sys
+        import tty
+        import termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
+
+getch = _GetchUnix()
 
 
 def usage():
-    print '''iciba.py [--daemon|-h|word]'''
+    print '''iciba.py [-d(--daemon)|-h(--help)|word]'''
+
+
+def myinput(flag='> '):
+    chars = []
+    sys.stdout.write(flag)
+    while True:
+        newChar = getch()
+        if newChar in '\r\n':
+            print ''
+            break
+        elif newChar == '\b':
+            if chars:
+                del chars[-1]
+                sys.stdout.write('\b \b')
+        elif newChar in '\03\04':
+            sys.exit(-1)
+        else:
+            sys.stdout.write(newChar)
+            chars.append(newChar)
+    return ''.join(chars)
 
 
 def parseOpt(args):
@@ -93,7 +134,7 @@ def parseHtml(data):
         if posType is None:
             continue
         posContent = ''
-        contentList = groupPos.xpath('.//label/text()')
+        contentList = groupPos.xpath('.//label//text()')
         for c in contentList:
             posContent += c.encode(outputEncoding)
         if len(posType) == 0 and len(posContent) == 0:
@@ -123,9 +164,8 @@ def main():
     config, args = parseOpt(sys.argv[1:])
     if config['daemon']:
         while True:
-            line = sys.stdin.readline()
-            if not line:
-                break
+            # line = raw_input('> ')
+            line = myinput()
             word = line.strip()
             translate(word)
             sys.stdout.flush()
