@@ -2,15 +2,19 @@
 # encoding=utf-8
 
 import sys
+import os
 import getopt
 import htmlfetcher
 from htmlparser import HtmlXPathParser
 import colorprint
 
 outputEncoding = 'gb18030'
+historyFile = os.path.join(os.path.expanduser('~'), '.iciba_history')
+historyList = []
 
 
 class _GetchUnix:
+
     def __init__(self):
         pass
 
@@ -31,6 +35,26 @@ class _GetchUnix:
 getch = _GetchUnix()
 
 
+def readHistory():
+    global historyList, historyFile
+    try:
+        fp = open(historyFile, 'r')
+        for line in fp:
+            historyList.append(line.strip())
+    except IOError:
+        pass
+    return len(historyList)
+
+
+def writeHistory():
+    global historyList, historyFile
+    keepHistory = historyList[-1000:]
+    fp = open(historyFile, 'w')
+    for item in keepHistory:
+        print >> fp, item
+    fp.close()
+
+
 def usage():
     print '''iciba.py [-d(--daemon)|-h(--help)|word]'''
 
@@ -49,6 +73,8 @@ def myinput(flag='> '):
                 sys.stdout.write('\b \b')
         elif newChar in '\03\04':
             sys.exit(-1)
+        elif ord(newChar) == 72:
+            pass
         else:
             sys.stdout.write(newChar)
             chars.append(newChar)
@@ -150,7 +176,10 @@ def parseHtml(data):
 
 
 def translate(word):
-    url = 'http://www.iciba.com/' + word.decode('gbk').encode('utf8')
+    global historyList
+    historyList.append(word)
+    writeHistory()
+    url = 'http://www.iciba.com/' + word.decode(outputEncoding).encode('utf8')
     home = 'http://www.iciba.com/'
     data = htmlfetcher.http_get(url, referer=home)
     if data is None:
@@ -163,6 +192,7 @@ def translate(word):
 def main():
     config, args = parseOpt(sys.argv[1:])
     if config['daemon']:
+        readHistory()
         while True:
             # line = raw_input('> ')
             line = myinput()
