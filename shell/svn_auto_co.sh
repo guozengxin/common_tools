@@ -3,11 +3,9 @@
 function GetUsernameAndPassword {
 	echo -e "Please input username: \c" 
 	read username
-	echo 
 
 	echo -e "Please input password: \c"
 	read -s password
-	echo 
 }
 
 dailybuild_file=
@@ -42,7 +40,11 @@ fi
 
 GetUsernameAndPassword
 
-if [ -e "$dailybuild_file" ]; then
+if [ -n "$dailybuild_file" ]; then
+	if [ ! -e "$dailybuild_file" ]; then
+		echo "$dailybuild_file not exist!"
+		exit 1
+	fi
 	maindir=$1
 	if [ -z $maindir ]; then
 		echo "maindir must indicated!"
@@ -83,7 +85,9 @@ if [ -e "$dailybuild_file" ]; then
 		svn co --username $username --password $password $url $name
 	done
 	cd ..
-else
-	echo "$dailybuild_file not exist!"
-	exit 1
+fi
+
+if [ -n "$url" ]; then
+	maindir=$1
+	svn co --username $username --password $password $url $maindir
 fi
