@@ -78,15 +78,15 @@
 
 #		http://portal.sys.sogou-op.org/portal/tools/send_mail.php
 #
-#		uid - ÉêÇëÈ¨ÏÞµÄuser_id£¬ÇëÊ¹ÓÃsogou-incÓÊÏäÕËºÅ
-#		fr_name - ·¢ÐÅÈËÐÕÃû
-#		fr_addr - ·¢ÐÅÈËemail
-#		title - ÓÊ¼þ±êÌâ
-#		body - ÓÊ¼þÄÚÈÝ
-#		mode - ÓÊ¼þÀàÐÍ£¬html»òtxt
-#		maillist - ÊÕÐÅÈËÓÊÏä£¬¶à¸öÓÊÏäÓÃ";"·Ö¸ô
-#		attname - ¸½¼þÎÄ¼þÃû
-#		attbody - ¸½¼þÕýÎÄ
+#		uid - ç”³è¯·æƒé™çš„user_idï¼Œè¯·ä½¿ç”¨sogou-incé‚®ç®±è´¦å·
+#		fr_name - å‘ä¿¡äººå§“å
+#		fr_addr - å‘ä¿¡äººemail
+#		title - é‚®ä»¶æ ‡é¢˜
+#		body - é‚®ä»¶å†…å®¹
+#		mode - é‚®ä»¶ç±»åž‹ï¼Œhtmlæˆ–txt
+#		maillist - æ”¶ä¿¡äººé‚®ç®±ï¼Œå¤šä¸ªé‚®ç®±ç”¨";"åˆ†éš”
+#		attname - é™„ä»¶æ–‡ä»¶å
+#		attbody - é™„ä»¶æ­£æ–‡
 
 	$handle = curl_init();
 
@@ -112,3 +112,4 @@
 	#$mailer = new mailer($from_mail, $from_name, $subject, $body);
 	#$mailer->mail($maillist, $mode, $cc, $bcc, $attachment, $inlineimage);
 ?>
+

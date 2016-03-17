@@ -1,7 +1,7 @@
 #!/usr/bin/expect -f
-# ×Ô¶¯²ÉÓÃssh-keygen¹«Ô¿ºÍË½Ô¿£¬²ÉÓÃrsaËã·¨¡£
+# è‡ªåŠ¨é‡‡ç”¨ssh-keygenå…¬é’¥å’Œç§é’¥ï¼Œé‡‡ç”¨rsaç®—æ³•ã€‚
 # ./ssh-keygen.exp [default|custom] [keyfilename] [passwd]
-# Èç¹û²ÉÓÃ×Ô¶¨Òå·½Ê½ĞèÒªÊäÈëkeyfilenameºÍpasswd²ÎÊı
+# å¦‚æœé‡‡ç”¨è‡ªå®šä¹‰æ–¹å¼éœ€è¦è¾“å…¥keyfilenameå’Œpasswdå‚æ•°
 
 set way [lindex $argv 0]
 if {$way == "default"} {
@@ -19,3 +19,4 @@ expect {
 	"Enter passphrase" { exp_send "$passwd\r"; exp_continue}
 	"Enter same passphrase again" { exp_send "$passwd\r"; exp_continue }
 }
+

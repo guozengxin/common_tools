@@ -1,16 +1,16 @@
 #! /bin/sh
 #####################################################################
-# ÔÚ±¾»úµ±Ç°ÓÃ»§£¨¿Í»§»ú£©ÓëÔ¶³ÌÖ÷»ú£¨·şÎñÆ÷£©Ö®¼ä½¨Á¢rsaĞÅÈÎ¹ØÏµ
+# åœ¨æœ¬æœºå½“å‰ç”¨æˆ·ï¼ˆå®¢æˆ·æœºï¼‰ä¸è¿œç¨‹ä¸»æœºï¼ˆæœåŠ¡å™¨ï¼‰ä¹‹é—´å»ºç«‹rsaä¿¡ä»»å…³ç³»
 # usage: sh ssh_trust_local.sh remotehost remoteuser remotepasswd 
-# Èç¹û²»ÏëÖ±½ÓÊäÈëÃ÷ÎÄÃÜÂë£¬¿ÉÓÃ-p´úÌæ
+# å¦‚æœä¸æƒ³ç›´æ¥è¾“å…¥æ˜æ–‡å¯†ç ï¼Œå¯ç”¨-pä»£æ›¿
 #####################################################################
 
-ssh_exp=/search/guozengxin/tools/shell/ssh.exp
+ssh_exp=~/tools/common_tools/shell/ssh.exp
 
 usage()
 {
 	echo "usage: sh ssh_trust_local.sh remotehost remoteuser remotepasswd"
-	echo "¹û²»ÏëÖ±½ÓÊäÈëÃ÷ÎÄÃÜÂë£¬¿ÉÓÃ-p´úÌæ"
+	echo "æœä¸æƒ³ç›´æ¥è¾“å…¥æ˜æ–‡å¯†ç ï¼Œå¯ç”¨-pä»£æ›¿"
 }
 
 arg_parse()
@@ -23,7 +23,7 @@ arg_parse()
 		exit -1
 	fi
 	if [ $remotepasswd == "-p" ]; then
-		echo -n "ÇëÊäÈëÔ¶³ÌÖ÷»ú£¨·şÎñÆ÷£©µÄÃÜÂë: "
+		echo -n "è¯·è¾“å…¥è¿œç¨‹ä¸»æœºï¼ˆæœåŠ¡å™¨ï¼‰çš„å¯†ç : "
 		read -s remotepasswd
 		echo
 	fi
@@ -32,9 +32,9 @@ arg_parse()
 keygen()
 {
 	if [ -e $local_rsa_pub ]; then
-		echo "¹«Ô¿´æÔÚ£¬²»ĞèÒª´´½¨"
+		echo "å…¬é’¥å­˜åœ¨ï¼Œä¸éœ€è¦åˆ›å»º"
 	else
-		echo "¹«Ô¿²»´æÔÚ£¬¿ªÊ¼´´½¨..."
+		echo "å…¬é’¥ä¸å­˜åœ¨ï¼Œå¼€å§‹åˆ›å»º..."
 		./ssh-keygen.exp default
 	fi
 }
@@ -43,11 +43,11 @@ keycopy()
 {
 	hn=`hostname`
 	remote_keyname=id_rsa.pub."$hn"
-	echo "½«¹«Ô¿¿½±´µ½Ô¶³ÌÖ÷»ú£¬Î»ÖÃ£º~/.ssh/"$remote_keyname"..."
+	echo "å°†å…¬é’¥æ‹·è´åˆ°è¿œç¨‹ä¸»æœºï¼Œä½ç½®ï¼š~/.ssh/"$remote_keyname"..."
 	$ssh_exp put $remotehost 22 $remoteuser $remotepasswd '~/.ssh/'$remote_keyname $local_rsa_pub 
-	echo "½«¹«Ô¿¼ÓÈëµ½Ô¶³ÌÖ÷»úÎÄ¼ş£º~/.ssh/authorized_keys..."
+	echo "å°†å…¬é’¥åŠ å…¥åˆ°è¿œç¨‹ä¸»æœºæ–‡ä»¶ï¼š~/.ssh/authorized_keys..."
 	$ssh_exp exec $remotehost 22 $remoteuser $remotepasswd "cd ~/.ssh/ && cat $remote_keyname >> authorized_keys"
-	echo "ÉèÖÃÔ¶³ÌÖ÷»úauthorized_keysÎÄ¼şÈ¨ÏŞ£º600..."
+	echo "è®¾ç½®è¿œç¨‹ä¸»æœºauthorized_keysæ–‡ä»¶æƒé™ï¼š600..."
 	$ssh_exp exec $remotehost 22 $remoteuser $remotepasswd "cd ~/.ssh/ && chmod 600 authorized_keys"
 }
 
@@ -55,3 +55,4 @@ local_rsa_pub=~/.ssh/id_rsa.pub
 arg_parse "$@"
 keygen
 keycopy
+

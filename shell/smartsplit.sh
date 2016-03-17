@@ -1,5 +1,5 @@
 #!/bin/sh
-# Õâ¸ö½Å±¾µÄ¹¦ÄÜÊÇ½«ÊäÈëÎÄ¼şsplit³É¶à¸öĞ¡ÎÄ¼ş£¬ºó×ºÃûÒÔÈÕÆÚÀ´·Ö¸ô
+# è¿™ä¸ªè„šæœ¬çš„åŠŸèƒ½æ˜¯å°†è¾“å…¥æ–‡ä»¶splitæˆå¤šä¸ªå°æ–‡ä»¶ï¼Œåç¼€åä»¥æ—¥æœŸæ¥åˆ†éš”
 
 inputfile=$1
 linecount=$2
@@ -7,18 +7,18 @@ prefix=$3
 begintime=$4
 timeunit=$5
 
-# °ÑÊäÈëÎÄ¼ş°´ĞĞ·Ö¸î£¬Ç°×ºÃûÎª$tempprefix
+# æŠŠè¾“å…¥æ–‡ä»¶æŒ‰è¡Œåˆ†å‰²ï¼Œå‰ç¼€åä¸º$tempprefix
 tempprefix=".temp-smartsplit."
 split -d -l $linecount -a 5 $inputfile $tempprefix
 
-# Ê±¼äµ¥Î»±ØĞëÎª day »òÕß hour
+# æ—¶é—´å•ä½å¿…é¡»ä¸º day æˆ–è€… hour
 if [ "$timeunit" = "day" ] || [ "$timeunit" = "hour" ]; then
 	echo ""
 else
 	timeunit=hour
 fi
 
-# ¼ÆËãÊäÈëµÄbegintime
+# è®¡ç®—è¾“å…¥çš„begintime
 d1=`date -d "$begintime" +%s`
 d2=`date +%s`
 if [ $timeunit = "day" ]; then
@@ -44,3 +44,4 @@ do
 	fi
 	mv $filename ${prefix}$nsuffix
 done
+
